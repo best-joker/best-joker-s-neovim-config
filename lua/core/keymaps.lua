@@ -4,7 +4,7 @@ vim.g.mapleader = " "
 local keymap = vim.keymap
 
 -- 插件nvim-tree
-keymap.set("n","<leader>tr",":NvimTreeToggle<CR>")
+keymap.set("n","<leader>t",":NvimTreeToggle<CR>")
 
 -- 分割线标签页
 -- 上一个 buffer
