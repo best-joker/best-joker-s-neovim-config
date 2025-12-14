@@ -8,6 +8,7 @@ require("plugins.lsp")
 require("plugins.bufferline")
 require("plugins.gitsigns")
 require("plugins.toggleterm")
+require("plugins.tmux-navigator")
 
 -- vim.opt.shell = '"C:\\Program Files\\PowerShell\\7\\pwsh.exe"'
 -- vim.opt.shellcmdflag = "-Command"
