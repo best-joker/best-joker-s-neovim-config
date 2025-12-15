@@ -1,3 +1,4 @@
+-- lua/plugins/plugins-setup.lua
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -11,73 +12,70 @@ end
 
 local packer_bootstrap = ensure_packer()
 
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufwritePost plugins-setup.lua source <afile> | PackerSync
-  augroup end
-]])
+-- 先删除或注释掉自动编译功能，避免频繁触发
+-- vim.cmd([[...]])
 
 return require('packer').startup(function(use)
+  -- Packer 自身
   use 'wbthomason/packer.nvim'
-  use 'folke/tokyonight.nvim' --主题
+  
+  -- 主题
+  use 'folke/tokyonight.nvim'
+  
+  -- 状态栏
   use {
     'nvim-lualine/lualine.nvim',
-    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
-  }
-  use {
-	'nvim-tree/nvim-tree.lua', --文档树
-    requires = {
-	  'nvim-tree/nvim-web-devicons', --文档树图标
-	}
-  }
-  use {
-      "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",  -- 这个相当于mason.nvim和lspconfig的桥梁
-    "neovim/nvim-lspconfig"
+    requires = { 'nvim-tree/nvim-web-devicons' }
   }
   
-  -- 自动补全
-  use "hrsh7th/nvim-cmp"
-  use "hrsh7th/cmp-nvim-lsp"
-  use "L3MON4D3/LuaSnip" -- snippets引擎，不装这个自动补全会出问题
-  use "saadparwaiz1/cmp_luasnip"
-  use "rafamadriz/friendly-snippets"
-  use "hrsh7th/cmp-path" -- 文件路径
-
-  use("christoomey/vim-tmux-navigator") --CTRL + h、j、k定位窗口
-  use "nvim-treesitter/nvim-treesitter" --语法高亮
-  use "p00f/nvim-ts-rainbow" --配合treesitter，不同括号不同颜色 
-
-  use "akinsho/bufferline.nvim" -- buffer分割线
-  use "lewis6991/gitsigns.nvim" --git提示
-
-  -- 终端插件
+  -- 文件树
   use {
-    "akinsho/toggleterm.nvim",
+    'nvim-tree/nvim-tree.lua',
+    requires = { 'nvim-tree/nvim-web-devicons' }
+  }
+
+  -- === LSP 核心插件（必须分开声明）===
+  use 'williamboman/mason.nvim'
+  use 'williamboman/mason-lspconfig.nvim'
+  use 'neovim/nvim-lspconfig'
+
+  -- === 自动补全插件（分开声明）===
+  use 'hrsh7th/nvim-cmp'
+  use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/cmp-buffer'  -- 添加这个
+  use 'hrsh7th/cmp-path'
+  use 'L3MON4D3/LuaSnip'
+  use 'saadparwaiz1/cmp_luasnip'
+  use 'rafamadriz/friendly-snippets'
+
+  -- 其他插件
+  use 'christoomey/vim-tmux-navigator'
+  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+  use 'p00f/nvim-ts-rainbow'
+  use 'akinsho/bufferline.nvim'
+  use 'lewis6991/gitsigns.nvim'
+  
+  use {
+    'akinsho/toggleterm.nvim',
     tag = '*',
   }
 
-  -- markdown文件渲染
-  -- 在输出`:MarkdownPreview`之后在浏览器中渲染
-  use({
-    "iamcco/markdown-preview.nvim",
-    run = "cd app && npm install",
-    ft = { "markdown" },
-    config = function()
-      vim.g.mkdp_auto_start = 0
-    end,
-  })
+  use {
+    'iamcco/markdown-preview.nvim',
+    run = function() vim.fn['mkdp#util#install']() end,
+    ft = 'markdown'
+  }
 
-  use({
-    "MeanderingProgrammer/render-markdown.nvim",
-    requires = { "nvim-treesitter/nvim-treesitter" },
+  use {
+    'MeanderingProgrammer/render-markdown.nvim',
+    requires = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-      require("render-markdown").setup({})
+      require('render-markdown').setup({})
     end,
-  })
+  }
   
- if packer_bootstrap then
+  -- 首次安装时自动同步插件
+  if packer_bootstrap then
     require('packer').sync()
   end
 end)
